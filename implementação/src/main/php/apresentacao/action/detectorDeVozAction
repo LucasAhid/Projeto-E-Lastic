@@ -5,11 +5,11 @@ if (isset($_POST['start'])) {
     $audioText = '';  // Coloque o texto convertido aqui
 
     // Envia o texto por e-mail
-    $to = 'seu_email@example.com';
+    $to = 'joao.macedo@elastic.fit';
     $subject = 'Processo E-lastic';  // Assunto do e-mail
     $message = "Texto capturado do áudio:\n\n" . $audioText;
-    $headers = 'From: webmaster@example.com' . "\r\n" .
-               'Reply-To: webmaster@example.com' . "\r\n" .
+    $headers = 'From: lucas.ahid.contato@gmail.com' . "\r\n" .
+               'Reply-To: lucas.ahid.contato@gmail.com' . "\r\n" .
                'X-Mailer: PHP/' . phpversion();
 
     mail($to, $subject, $message, $headers);

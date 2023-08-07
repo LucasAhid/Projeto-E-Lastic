@@ -13,6 +13,7 @@
         const startBtn = document.getElementById('startBtn');
         const stopBtn = document.getElementById('stopBtn');
         const output = document.getElementById('output');
+        const form = document.querySelector('form');
 
         let recognition;
 
@@ -56,6 +57,8 @@
             }
 
             output.innerHTML = '<b>Texto reconhecido:</b><br>' + finalTranscript + '<i>' + interimTranscript + '</i>';
+            // Atualizar o campo de texto oculto no formulário com o texto capturado
+            form.querySelector('input[name="captured_text"]').value = finalTranscript;
         };
 
         startBtn.addEventListener('click', () => {
@@ -65,7 +68,6 @@
         stopBtn.addEventListener('click', () => {
             recognition.stop();
         });
-
     </script>
 </body>
 </html>
