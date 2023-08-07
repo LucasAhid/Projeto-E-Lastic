@@ -1,12 +1,9 @@
 <?php
 if (isset($_POST['start'])) {
-    // Captura áudio e converte em texto usando a API do Google
-    // Implemente aqui a lógica para capturar e processar o áudio
-    $audioText = '';  // Coloque o texto convertido aqui
+    $audioText = $_POST['captured_text'];
 
-    // Envia o texto por e-mail
     $to = 'joao.macedo@elastic.fit';
-    $subject = 'Processo E-lastic';  // Assunto do e-mail
+    $subject = 'Processo E-lastic';
     $message = "Texto capturado do áudio:\n\n" . $audioText;
     $headers = 'From: lucas.ahid.contato@gmail.com' . "\r\n" .
                'Reply-To: lucas.ahid.contato@gmail.com' . "\r\n" .
@@ -14,7 +11,6 @@ if (isset($_POST['start'])) {
 
     mail($to, $subject, $message, $headers);
 
-    // Adiciona ao banco de dados MySQL
     $servername = "localhost";
     $username = "Sys";
     $password = "G@lvao123";
