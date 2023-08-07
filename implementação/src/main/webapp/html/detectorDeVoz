@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Speech to Text</title>
+</head>
+<body>
+    <h1>Speech to Text</h1>
+    <button id="startBtn">Iniciar</button>
+    <button id="stopBtn" disabled>Parar</button>
+    <p id="output"></p>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const output = document.getElementById('output');
+
+        let recognition;
+
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+        } else {
+            alert('Navegador não suporta a API de reconhecimento de fala do Google.');
+        }
+
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'pt-BR';  // Defina o idioma desejado
+
+        recognition.onstart = () => {
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            output.textContent = 'Escutando...';
+        };
+
+        recognition.onerror = event => {
+            output.textContent = 'Erro ao capturar áudio: ' + event.error;
+        };
+
+        recognition.onend = () => {
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            output.textContent = '';
+        };
+
+        recognition.onresult = event => {
+            let interimTranscript = '';
+            let finalTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript + ' ';
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+
+            output.innerHTML = '<b>Texto reconhecido:</b><br>' + finalTranscript + '<i>' + interimTranscript + '</i>';
+        };
+
+        startBtn.addEventListener('click', () => {
+            recognition.start();
+        });
+
+        stopBtn.addEventListener('click', () => {
+            recognition.stop();
+        });
+
+    </script>
+</body>
+</html>
