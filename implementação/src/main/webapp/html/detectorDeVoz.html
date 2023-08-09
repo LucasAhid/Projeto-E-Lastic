@@ -1,20 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Speech to Text</title>
+    <title>E-LASTIC</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: black;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #buttons {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        #startBtn,
+        #stopBtn,
+        #sendBtn {
+            background-color: #77b6ea;
+            color: black;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        #output {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Speech to Text</h1>
-    <button id="startBtn">Iniciar</button>
-    <button id="stopBtn" disabled>Parar</button>
+    <h1>APRESENTAÇÃO E-LASTIC</h1>
+    <div id="buttons">
+        <div class="button-group">
+            <button id="startBtn">Iniciar</button>
+            <button id="stopBtn" disabled>Parar</button>
+        </div>
+        <button id="sendBtn" disabled>Enviar</button>
+    </div>
     <p id="output"></p>
+
+    <form id="voiceForm" action="detectorDeVozAction.php" method="POST">
+        <input type="hidden" name="captured_text">
+        <button type="submit" id="hiddenSubmit" style="display: none;"></button>
+    </form>
 
     <script>
         const startBtn = document.getElementById('startBtn');
         const stopBtn = document.getElementById('stopBtn');
+        const sendBtn = document.getElementById('sendBtn');
         const output = document.getElementById('output');
-        const form = document.querySelector('form');
-
         let recognition;
 
         if ('webkitSpeechRecognition' in window) {
@@ -25,11 +82,12 @@
 
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = 'pt-BR';  // Defina o idioma desejado
+        recognition.lang = 'pt-BR';
 
         recognition.onstart = () => {
             startBtn.disabled = true;
             stopBtn.disabled = false;
+            sendBtn.disabled = true;
             output.textContent = 'Escutando...';
         };
 
@@ -40,6 +98,7 @@
         recognition.onend = () => {
             startBtn.disabled = false;
             stopBtn.disabled = true;
+            sendBtn.disabled = false;
             output.textContent = '';
         };
 
@@ -57,8 +116,19 @@
             }
 
             output.innerHTML = '<b>Texto reconhecido:</b><br>' + finalTranscript + '<i>' + interimTranscript + '</i>';
-            // Atualizar o campo de texto oculto no formulário com o texto capturado
-            form.querySelector('input[name="captured_text"]').value = finalTranscript;
+            sendBtn.addEventListener('click', () => {
+                const formData = new FormData();
+                formData.append('captured_text', finalTranscript);
+
+                fetch('detectorDeVozAction.php', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    // Processar a resposta do servidor, se necessário
+                }).catch(error => {
+                    console.error('Erro ao enviar dados para o servidor:', error);
+                });
+            });
         };
 
         startBtn.addEventListener('click', () => {

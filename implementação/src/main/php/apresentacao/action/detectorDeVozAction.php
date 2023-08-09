@@ -1,35 +1,50 @@
 <?php
-if (isset($_POST['start'])) {
-    $audioText = $_POST['captured_text'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Recebe o texto capturado do JavaScript
+    $capturedText = $_POST['captured_text'];
 
+    // Obtém a hora da gravação
+    date_default_timezone_set('America/Sao_Paulo');
+    $recordingTime = date('Y-m-d H:i:s');
+
+    // Configurações do email
     $to = 'joao.macedo@elastic.fit';
-    $subject = 'Processo E-lastic';
-    $message = "Texto capturado do áudio:\n\n" . $audioText;
-    $headers = 'From: lucas.ahid.contato@gmail.com' . "\r\n" .
-               'Reply-To: lucas.ahid.contato@gmail.com' . "\r\n" .
-               'X-Mailer: PHP/' . phpversion();
+    $subject = 'Texto Capturado por E-LASTIC';
+    $message = "Texto Capturado: \n\n" . $capturedText . "\n\nHora da Gravação: " . $recordingTime;
+    $headers = 'From: seu_email@example.com' . "\r\n" .
+        'Reply-To: seu_email@example.com' . "\r\n" .
+        'X-Mailer: PHP/' . phpversion();
 
-    mail($to, $subject, $message, $headers);
+    // Envia o email
+    if (mail($to, $subject, $message, $headers)) {
+        // Conexão com o banco de dados (substitua pelos seus dados)
+        $servername = "localhost";
+        $username = "Lucas_ahid";
+        $password = "G@lvao123";
+        $dbname = "PRJ_E_LASTIC";
 
-    $servername = "localhost";
-    $username = "Sys";
-    $password = "G@lvao123";
-    $dbname = "E-lastic";
+        $conn = new mysqli($servername, $username, $password, $dbname);
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
+        // Verifica a conexão
+        if ($conn->connect_error) {
+            die("Conexão falhou: " . $conn->connect_error);
+        }
 
-    if ($conn->connect_error) {
-        die("Falha na conexão com o banco de dados: " . $conn->connect_error);
-    }
+        // Insere os dados na tabela
+        $sql = "INSERT INTO TAB_REGISTRO (TEXTO, DATAHORA, Destinatario)
+                VALUES ('$capturedText', '$recordingTime', '$to')";
 
-    $sql = "INSERT INTO audio_data (audio_text) VALUES ('$audioText')";
+        if ($conn->query($sql) === TRUE) {
+            echo "Dados inseridos no banco com sucesso!";
+        } else {
+            echo "Erro ao inserir dados no banco: " . $conn->error;
+        }
 
-    if ($conn->query($sql) === TRUE) {
-        echo "Registro adicionado ao banco de dados com sucesso.";
+        $conn->close();
     } else {
-        echo "Erro ao adicionar registro ao banco de dados: " . $conn->error;
+        echo 'Ocorreu um erro ao enviar o email.';
     }
-
-    $conn->close();
+} else {
+    echo 'Método inválido.';
 }
 ?>
