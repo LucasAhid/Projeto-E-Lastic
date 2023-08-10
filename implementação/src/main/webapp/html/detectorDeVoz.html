@@ -49,6 +49,23 @@
         #output {
             margin-top: 20px;
         }
+        #startBtn[disabled], #sendBtn[disabled] {
+            background-color: gray;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        #stopBtn[disabled] {
+            background-color: gray;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        #startBtn:not([disabled]), #sendBtn:not([disabled]) {
+            background-color: #77b6ea;
+            color: black;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
